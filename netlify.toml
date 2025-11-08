@@ -1,0 +1,16 @@
+# This file configures how Netlify builds and deploys your site.
+[build]
+  # The command to build your Vite site.
+  command = "npm run build"
+  
+  # The directory where the built site is located.
+  publish = "dist"
+  
+  # The directory containing your serverless functions.
+  functions = "netlify/functions"
+
+# This rule directs all API requests (like /api/users) to your backend functions.
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
