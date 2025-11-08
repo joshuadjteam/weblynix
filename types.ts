@@ -36,8 +36,8 @@ export interface UserFeatures {
 export interface User {
   id: number;
   username: string;
-  email: string;
-  sipTalkId: string;
+  email: string | null;
+  sipTalkId: string | null;
   password?: string;
   role: UserRole;
   billingStatus: BillingStatus;

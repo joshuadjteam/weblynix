@@ -34,7 +34,7 @@ const handler: Handler = async (event) => {
                 const { rows: insertedRows } = await pool.query<User>(
                     `INSERT INTO users (username, email, "sipTalkId", password, role, "billingStatus", features)
                      VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-                    [newUser.username, newUser.email, newUser.sipTalkId, newUser.password, newUser.role, newUser.billingStatus, JSON.stringify(newUser.features)]
+                    [newUser.username, newUser.email || null, newUser.sipTalkId || null, newUser.password, newUser.role, newUser.billingStatus, JSON.stringify(newUser.features)]
                 );
                 const { password, ...newUserToReturn } = insertedRows[0];
                 return { statusCode: 201, body: JSON.stringify(newUserToReturn) };
@@ -60,7 +60,7 @@ const handler: Handler = async (event) => {
                 const { rows } = await pool.query<User>(
                     `UPDATE users SET username = $1, email = $2, "sipTalkId" = $3, password = $4, role = $5, "billingStatus" = $6, features = $7
                      WHERE id = $8 RETURNING *`,
-                    [updatedUser.username, updatedUser.email, updatedUser.sipTalkId, updatedUser.password, updatedUser.role, updatedUser.billingStatus, JSON.stringify(updatedUser.features), updatedUser.id]
+                    [updatedUser.username, updatedUser.email || null, updatedUser.sipTalkId || null, updatedUser.password, updatedUser.role, updatedUser.billingStatus, JSON.stringify(updatedUser.features), updatedUser.id]
                 );
 
                 if (rows.length > 0) {

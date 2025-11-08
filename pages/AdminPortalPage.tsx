@@ -7,8 +7,8 @@ type FeatureKey = keyof UserFeatures;
 
 const defaultNewUser: Omit<User, 'id'> = {
     username: '',
-    email: '',
-    sipTalkId: '',
+    email: null,
+    sipTalkId: null,
     password: '',
     role: UserRole.STANDARD,
     billingStatus: BillingStatus.ON_TIME,
@@ -62,7 +62,7 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ user, onSave, onClose }) 
                     </div>
                     <div>
                         <label className="block text-sm font-medium">Email</label>
-                        <input type="email" name="email" value={formData.email || ''} onChange={handleChange} required className="mt-1 block w-full rounded-md bg-gray-100 dark:bg-gray-700 border-transparent focus:border-lynix-blue focus:ring-lynix-blue" />
+                        <input type="email" name="email" value={formData.email || ''} onChange={handleChange} className="mt-1 block w-full rounded-md bg-gray-100 dark:bg-gray-700 border-transparent focus:border-lynix-blue focus:ring-lynix-blue" />
                     </div>
                      <div>
                         <label className="block text-sm font-medium">Password</label>
@@ -70,7 +70,7 @@ const UserFormModal: React.FC<UserFormModalProps> = ({ user, onSave, onClose }) 
                     </div>
                     <div>
                         <label className="block text-sm font-medium">LynixSIPTalk ID</label>
-                        <input type="text" name="sipTalkId" value={formData.sipTalkId || ''} onChange={handleChange} required className="mt-1 block w-full rounded-md bg-gray-100 dark:bg-gray-700 border-transparent focus:border-lynix-blue focus:ring-lynix-blue" />
+                        <input type="text" name="sipTalkId" value={formData.sipTalkId || ''} onChange={handleChange} className="mt-1 block w-full rounded-md bg-gray-100 dark:bg-gray-700 border-transparent focus:border-lynix-blue focus:ring-lynix-blue" />
                     </div>
                     <div>
                         <label className="block text-sm font-medium">Role</label>
