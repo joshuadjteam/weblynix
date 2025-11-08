@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useApp } from '../contexts/AppContext';
-import { User } from '../types';
-import { SaveIcon, EditIcon } from '../components/icons/Icons';
+import { useApp } from '@/contexts/AppContext';
+import { User } from '@/types';
+import { SaveIcon, EditIcon } from '@/components/icons/Icons';
 
 const ProfilePage: React.FC = () => {
     const { user, updateUser, users } = useApp();

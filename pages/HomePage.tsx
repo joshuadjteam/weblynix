@@ -1,9 +1,8 @@
-
 import React from 'react';
-import { useClock } from '../hooks/useClock';
-import PulsingQuestionIcon from '../components/PulsingQuestionIcon';
-import { useApp } from '../contexts/AppContext';
-import { SearchIcon } from '../components/icons/Icons';
+import { useClock } from '@/hooks/useClock';
+import PulsingQuestionIcon from '@/components/PulsingQuestionIcon';
+import { useApp } from '@/contexts/AppContext';
+import { SearchIcon } from '@/components/icons/Icons';
 
 const HomePage: React.FC = () => {
     const { user } = useApp();

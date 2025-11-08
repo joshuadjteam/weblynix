@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useApp } from '../contexts/AppContext';
-import { Conversation, ChatMessage } from '../types';
-import { SendIcon } from '../components/icons/Icons';
+import { useApp } from '@/contexts/AppContext';
+import { Conversation, ChatMessage } from '@/types';
+import { SendIcon } from '@/components/icons/Icons';
 
 const ChatPage: React.FC = () => {
     const { user, users } = useApp();
@@ -12,10 +12,11 @@ const ChatPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        if (!user) return;
         const fetchConversations = async () => {
             setIsLoading(true);
             try {
-                const response = await fetch('/api/chats');
+                const response = await fetch(`/api/chats?userId=${user.id}`);
                 if (response.ok) {
                     const data = await response.json();
                     setConversations(data);
@@ -32,7 +33,7 @@ const ChatPage: React.FC = () => {
             }
         };
         if(users.length > 0) fetchConversations();
-    }, [users]);
+    }, [users, user]);
 
     const activeConversation = conversations.find(c => c.contactId === activeContactId);
     const activeContact = users.find(u => u.id === activeContactId);

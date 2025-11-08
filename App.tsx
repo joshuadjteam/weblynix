@@ -1,19 +1,18 @@
-
 import React, { useEffect } from 'react';
-import { AppProvider, useApp } from './contexts/AppContext';
-import Header from './components/Header';
-import SignInPage from './pages/SignInPage';
-import HomePage from './pages/HomePage';
-import LocalMailPage from './pages/LocalMailPage';
-import ChatPage from './pages/ChatPage';
-import NotepadPage from './pages/NotepadPage';
-import ContactPage from './pages/ContactPage';
-import CalculatorPage from './pages/CalculatorPage';
-import LynxAiPage from './pages/LynxAiPage';
-import DialerPage from './pages/DialerPage';
-import ProfilePage from './pages/ProfilePage';
-import AdminPortalPage from './pages/AdminPortalPage';
-import { Page, UserRole } from './types';
+import { AppProvider, useApp } from '@/contexts/AppContext';
+import Header from '@/components/Header';
+import SignInPage from '@/pages/SignInPage';
+import HomePage from '@/pages/HomePage';
+import LocalMailPage from '@/pages/LocalMailPage';
+import ChatPage from '@/pages/ChatPage';
+import NotepadPage from '@/pages/NotepadPage';
+import ContactsPage from '@/pages/ContactPage';
+import CalculatorPage from '@/pages/CalculatorPage';
+import LynxAiPage from '@/pages/LynxAiPage';
+import DialerPage from '@/pages/DialerPage';
+import ProfilePage from '@/pages/ProfilePage';
+import AdminPortalPage from '@/pages/AdminPortalPage';
+import { Page, UserRole } from '@/types';
 
 const PageRenderer: React.FC = () => {
     const { currentPage, user, setCurrentPage } = useApp();
@@ -39,6 +38,10 @@ const PageRenderer: React.FC = () => {
                  isAccessible = isUserLoggedIn && user.features.dialer;
                  if (!isUserLoggedIn) redirectTo = Page.SIGN_IN;
                  else if (!isAccessible) redirectTo = Page.HOME;
+                break;
+            case Page.CONTACTS:
+                 isAccessible = isUserLoggedIn;
+                 if (!isAccessible) redirectTo = Page.SIGN_IN;
                 break;
             case Page.PROFILE:
                 isAccessible = isUserLoggedIn;
@@ -69,6 +72,7 @@ const PageRenderer: React.FC = () => {
             case Page.LOCAL_MAIL: return !!user?.features.mail;
             case Page.CHAT: return !!user?.features.chat;
             case Page.DIALER: return !!user?.features.dialer;
+            case Page.CONTACTS: return !!user;
             case Page.PROFILE: return !!user;
             case Page.ADMIN_PORTAL: return user?.role === UserRole.ADMIN;
             case Page.SIGN_IN: return !user;
@@ -92,8 +96,8 @@ const PageRenderer: React.FC = () => {
             return <ChatPage />;
         case Page.NOTEPAD:
             return <NotepadPage />;
-        case Page.CONTACT:
-            return <ContactPage />;
+        case Page.CONTACTS:
+            return <ContactsPage />;
         case Page.CALCULATOR:
             return <CalculatorPage />;
         case Page.AI:

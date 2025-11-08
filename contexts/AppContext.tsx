@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { Page, User } from '../types';
-import { GUEST_USER } from '../constants';
+import { Page, User } from '@/types';
+import { GUEST_USER } from '@/constants';
 
 type AppContextType = {
     theme: 'light' | 'dark';

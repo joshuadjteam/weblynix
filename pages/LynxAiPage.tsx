@@ -1,8 +1,7 @@
-
 import React, { useState, useRef, useEffect } from 'react';
-import { useApp } from '../contexts/AppContext';
-import { generateText } from '../services/geminiService';
-import { UserRole } from '../types';
+import { useApp } from '@/contexts/AppContext';
+import { generateText } from '@/services/geminiService';
+import { UserRole } from '@/types';
 
 interface Message {
     sender: 'user' | 'ai';

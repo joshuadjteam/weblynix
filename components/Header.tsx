@@ -1,27 +1,28 @@
-
 import React, { useState, useRef, useEffect } from 'react';
-import { useApp } from '../contexts/AppContext';
-import { Page, UserRole } from '../types';
+import { useApp } from '@/contexts/AppContext';
+import { Page, UserRole } from '@/types';
 import { 
-    LogoIcon, GridIcon, LinkIcon, BellIcon, SunIcon, MoonIcon,
+    LogoIcon, GridIcon, LinkIcon, BellIcon, SunIcon, MoonIcon, HeadsetIcon, XIcon,
     MailIcon, MessageSquareIcon, FileTextIcon, ContactIcon, CalculatorIcon, SparklesIcon, PhoneIcon
-} from './icons/Icons';
+} from '@/components/icons/Icons';
 
 const Header: React.FC = () => {
     const { theme, toggleTheme, user, signOut, setCurrentPage } = useApp();
     const [appsMenuOpen, setAppsMenuOpen] = useState(false);
     const [linksMenuOpen, setLinksMenuOpen] = useState(false);
     const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+    const [contactUsModalOpen, setContactUsModalOpen] = useState(false);
 
     const appsMenuRef = useRef<HTMLDivElement>(null);
     const linksMenuRef = useRef<HTMLDivElement>(null);
     const profileMenuRef = useRef<HTMLDivElement>(null);
+    const contactUsModalRef = useRef<HTMLDivElement>(null);
 
     const appItems = [
         { name: Page.LOCAL_MAIL, enabled: user?.features.mail ?? false, icon: <MailIcon /> },
         { name: Page.CHAT, enabled: user?.features.chat ?? false, icon: <MessageSquareIcon /> },
         { name: Page.NOTEPAD, enabled: true, icon: <FileTextIcon /> },
-        { name: Page.CONTACT, enabled: true, icon: <ContactIcon /> },
+        { name: Page.CONTACTS, enabled: !!user, icon: <ContactIcon /> },
         { name: Page.CALCULATOR, enabled: true, icon: <CalculatorIcon /> },
         { name: Page.AI, enabled: user?.features.ai ?? true, icon: <SparklesIcon /> }, // AI enabled for anonymous
         { name: Page.DIALER, enabled: user?.features.dialer ?? false, icon: <PhoneIcon /> },
@@ -43,6 +44,7 @@ const Header: React.FC = () => {
             if (appsMenuRef.current && !appsMenuRef.current.contains(event.target as Node)) setAppsMenuOpen(false);
             if (linksMenuRef.current && !linksMenuRef.current.contains(event.target as Node)) setLinksMenuOpen(false);
             if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) setProfileMenuOpen(false);
+            if (contactUsModalRef.current && !contactUsModalRef.current.contains(event.target as Node)) setContactUsModalOpen(false);
         };
         document.addEventListener("mousedown", handleClickOutside);
         return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -60,6 +62,11 @@ const Header: React.FC = () => {
                     </div>
 
                     <div className="flex items-center space-x-2 sm:space-x-4">
+                        {/* Contact Us Modal Trigger */}
+                        <button onClick={() => setContactUsModalOpen(true)} className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lynix-blue">
+                            <HeadsetIcon />
+                        </button>
+
                         {/* Links Dropdown */}
                         <div className="relative" ref={linksMenuRef}>
                             <button onClick={() => setLinksMenuOpen(!linksMenuOpen)} className="p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-lynix-blue">
@@ -140,6 +147,33 @@ const Header: React.FC = () => {
                     </div>
                 </div>
             </div>
+            {contactUsModalOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                    <div className="bg-white dark:bg-lynix-dark-blue rounded-lg shadow-2xl p-6 w-full max-w-sm m-4 relative" ref={contactUsModalRef}>
+                        <button onClick={() => setContactUsModalOpen(false)} className="absolute top-2 right-2 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
+                            <XIcon />
+                        </button>
+                        <h2 className="text-2xl font-bold mb-4 text-lynix-blue dark:text-lynix-light-blue">Get in Touch</h2>
+                        <p className="text-md text-gray-600 dark:text-gray-300 mb-6">
+                            We're here to help and answer any question you might have.
+                        </p>
+                        <div className="space-y-4 text-left text-gray-800 dark:text-gray-200">
+                            <div className="flex items-center">
+                                <span className="font-bold w-20">Email:</span>
+                                <a href="mailto:admin@lynixity.x10.bz" className="hover:text-lynix-orange break-all">admin@lynixity.x10.bz</a>
+                            </div>
+                            <div className="flex items-center">
+                                <span className="font-bold w-20">Phone:</span>
+                                <span>+1 (647) 247 - 4844</span>
+                            </div>
+                            <div className="flex items-center">
+                                <span className="font-bold w-20">TalkID:</span>
+                                <span>0470055990</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </header>
     );
 };

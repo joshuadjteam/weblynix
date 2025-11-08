@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Mail } from '../types';
-import { InboxIcon, SendIcon, TrashIcon, EditIcon } from '../components/icons/Icons';
+import { Mail } from '@/types';
+import { InboxIcon, SendIcon, TrashIcon, EditIcon } from '@/components/icons/Icons';
 
 const LocalMailPage: React.FC = () => {
     const [mails, setMails] = useState<Mail[]>([]);

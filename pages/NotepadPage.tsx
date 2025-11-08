@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Note } from '../types';
-import { PlusIcon, TrashIcon } from '../components/icons/Icons';
-import { useApp } from '../contexts/AppContext';
+import { Note } from '@/types';
+import { PlusIcon, TrashIcon } from '@/components/icons/Icons';
+import { useApp } from '@/contexts/AppContext';
 
 const NotepadPage: React.FC = () => {
     const { user } = useApp();

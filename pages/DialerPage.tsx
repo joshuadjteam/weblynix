@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { PhoneIcon, KeypadIcon, MicOffIcon, VolumeUpIcon, UserIcon } from '../components/icons/Icons';
+import { PhoneIcon, KeypadIcon, MicOffIcon, VolumeUpIcon, UserIcon } from '@/components/icons/Icons';
 
 const DialerPage: React.FC = () => {
     const [number, setNumber] = useState('');

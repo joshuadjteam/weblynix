@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useApp } from '../contexts/AppContext';
-import { User, UserRole, BillingStatus, UserFeatures } from '../types';
-import { PlusIcon, EditIcon, TrashIcon, XIcon } from '../components/icons/Icons';
+import { useApp } from '@/contexts/AppContext';
+import { User, UserRole, BillingStatus, UserFeatures } from '@/types';
+import { PlusIcon, EditIcon, TrashIcon, XIcon } from '@/components/icons/Icons';
 
 type FeatureKey = keyof UserFeatures;
 

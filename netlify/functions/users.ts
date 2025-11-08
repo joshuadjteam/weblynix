@@ -1,61 +1,80 @@
 import type { Handler } from '@netlify/functions';
-import { users } from './db';
+import pool from './db-client';
 import { User } from './types';
 
 const handler: Handler = async (event) => {
     const { httpMethod, body } = event;
 
     try {
+        await pool.query('SELECT 1'); // test connection
+    } catch (e) {
+        return { statusCode: 500, body: JSON.stringify({ message: "Database connection failed", error: e.message }) };
+    }
+
+    try {
         switch (httpMethod) {
-            case 'POST':
+            case 'POST': {
                 const postData = JSON.parse(body || '{}');
-                // Login action
                 if (postData.action === 'login') {
                     const { identifier, password } = postData;
-                    const user = users.find(
-                        u => (u.username === identifier || u.email === identifier || u.sipTalkId === identifier) && u.password === password
+                    const { rows } = await pool.query<User>(
+                        `SELECT * FROM users WHERE (username = $1 OR email = $1 OR "sipTalkId" = $1) AND password = $2`,
+                        [identifier, password]
                     );
+                    const user = rows[0];
                     if (user) {
                         const { password, ...userToReturn } = user;
                         return { statusCode: 200, body: JSON.stringify(userToReturn) };
                     }
                     return { statusCode: 401, body: JSON.stringify({ message: 'Invalid credentials' }) };
                 }
-                // Add user action
-                const newUser: User = { ...postData, id: Date.now() };
-                if (!newUser.password) newUser.password = 'password';
-                users.push(newUser);
-                const { password: _, ...newUserToReturn } = newUser;
+                
+                const newUser: Omit<User, 'id'> = postData;
+                if (!newUser.password) newUser.password = 'password'; // Default password
+                const { rows: insertedRows } = await pool.query<User>(
+                    `INSERT INTO users (username, email, "sipTalkId", password, role, "billingStatus", features)
+                     VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+                    [newUser.username, newUser.email, newUser.sipTalkId, newUser.password, newUser.role, newUser.billingStatus, JSON.stringify(newUser.features)]
+                );
+                const { password, ...newUserToReturn } = insertedRows[0];
                 return { statusCode: 201, body: JSON.stringify(newUserToReturn) };
+            }
 
-            case 'GET':
-                const usersToReturn = users.map(({ password, ...user }) => user);
-                return { statusCode: 200, body: JSON.stringify(usersToReturn) };
+            case 'GET': {
+                const { rows } = await pool.query(
+                    `SELECT id, username, email, "sipTalkId", role, "billingStatus", features FROM users`
+                );
+                return { statusCode: 200, body: JSON.stringify(rows) };
+            }
 
-            // Fix: Added a block to scope `userIndex` and prevent a redeclaration error.
             case 'PUT': {
                 const updatedUser: User = JSON.parse(body || '{}');
-                const userIndex = users.findIndex(u => u.id === updatedUser.id);
-                if (userIndex !== -1) {
-                    // Preserve password if not provided
-                    if (!updatedUser.password) {
-                        updatedUser.password = users[userIndex].password;
-                    }
-                    users[userIndex] = updatedUser;
-                    const { password, ...userToReturn } = updatedUser;
-                    return { statusCode: 200, body: JSON.stringify(userToReturn) };
+                // If password is blank, we keep the old one.
+                if (!updatedUser.password) {
+                     const { rows: existingUserRows } = await pool.query('SELECT password FROM users WHERE id = $1', [updatedUser.id]);
+                     if(existingUserRows.length > 0) {
+                        updatedUser.password = existingUserRows[0].password;
+                     }
+                }
+
+                const { rows } = await pool.query<User>(
+                    `UPDATE users SET username = $1, email = $2, "sipTalkId" = $3, password = $4, role = $5, "billingStatus" = $6, features = $7
+                     WHERE id = $8 RETURNING *`,
+                    [updatedUser.username, updatedUser.email, updatedUser.sipTalkId, updatedUser.password, updatedUser.role, updatedUser.billingStatus, JSON.stringify(updatedUser.features), updatedUser.id]
+                );
+
+                if (rows.length > 0) {
+                     const { password, ...userToReturn } = rows[0];
+                     return { statusCode: 200, body: JSON.stringify(userToReturn) };
                 }
                 return { statusCode: 404, body: JSON.stringify({ message: 'User not found' }) };
             }
 
-            // Fix: Cannot reassign an imported variable. Mutate the array in-place instead.
-            // Fix: Added a block to scope `userIndex` and prevent a redeclaration error.
             case 'DELETE': {
                 const { id } = JSON.parse(body || '{}');
-                const userIndex = users.findIndex(u => u.id === id);
-                if (userIndex !== -1) {
-                    users.splice(userIndex, 1);
-                    return { statusCode: 204, body: '' };
+                const result = await pool.query('DELETE FROM users WHERE id = $1', [id]);
+                if (result.rowCount > 0) {
+                     return { statusCode: 204, body: '' };
                 }
                 return { statusCode: 404, body: JSON.stringify({ message: 'User not found' }) };
             }
@@ -64,6 +83,7 @@ const handler: Handler = async (event) => {
                 return { statusCode: 405, body: 'Method Not Allowed' };
         }
     } catch (error) {
+        console.error("API Error:", error);
         return { statusCode: 500, body: JSON.stringify({ message: 'Server Error', error: error.message }) };
     }
 };

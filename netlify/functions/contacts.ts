@@ -1,6 +1,6 @@
 import type { Handler } from '@netlify/functions';
 import pool from './db-client';
-import { Note } from './types';
+import { Contact } from './types';
 
 const handler: Handler = async (event) => {
     const { httpMethod, body, queryStringParameters } = event;
@@ -13,42 +13,42 @@ const handler: Handler = async (event) => {
     try {
         switch (httpMethod) {
             case 'GET': {
-                const { rows } = await pool.query<Note>(
-                    'SELECT * FROM notes WHERE "userId" = $1 ORDER BY "lastModified" DESC', [userId]
+                const { rows } = await pool.query<Contact>(
+                    'SELECT * FROM contacts WHERE "userId" = $1 ORDER BY name ASC', [userId]
                 );
                 return { statusCode: 200, body: JSON.stringify(rows) };
             }
 
             case 'POST': {
-                const { title, content } = JSON.parse(body || '{}');
-                const { rows } = await pool.query<Note>(
-                    `INSERT INTO notes ("userId", title, content, "lastModified")
+                const { name, email, phone } = JSON.parse(body || '{}');
+                const { rows } = await pool.query<Contact>(
+                    `INSERT INTO contacts ("userId", name, email, phone)
                      VALUES ($1, $2, $3, $4) RETURNING *`,
-                    [userId, title || 'New Note', content || '', Date.now()]
+                    [userId, name, email || null, phone || null]
                 );
                 return { statusCode: 201, body: JSON.stringify(rows[0]) };
             }
 
             case 'PUT': {
-                const updatedNote: Note = JSON.parse(body || '{}');
-                const { rows } = await pool.query<Note>(
-                    `UPDATE notes SET title = $1, content = $2, "lastModified" = $3
+                const { id, name, email, phone } = JSON.parse(body || '{}');
+                const { rows } = await pool.query<Contact>(
+                    `UPDATE contacts SET name = $1, email = $2, phone = $3
                      WHERE id = $4 AND "userId" = $5 RETURNING *`,
-                    [updatedNote.title, updatedNote.content, Date.now(), updatedNote.id, userId]
+                    [name, email || null, phone || null, id, userId]
                 );
                 if (rows.length > 0) {
                     return { statusCode: 200, body: JSON.stringify(rows[0]) };
                 }
-                return { statusCode: 404, body: JSON.stringify({ message: 'Note not found or access denied' }) };
+                return { statusCode: 404, body: JSON.stringify({ message: 'Contact not found or access denied' }) };
             }
             
             case 'DELETE': {
                 const { id } = JSON.parse(body || '{}');
-                const result = await pool.query('DELETE FROM notes WHERE id = $1 AND "userId" = $2', [id, userId]);
+                const result = await pool.query('DELETE FROM contacts WHERE id = $1 AND "userId" = $2', [id, userId]);
                 if (result.rowCount > 0) {
                     return { statusCode: 204, body: '' };
                 }
-                return { statusCode: 404, body: JSON.stringify({ message: 'Note not found or access denied' }) };
+                return { statusCode: 404, body: JSON.stringify({ message: 'Contact not found or access denied' }) };
             }
 
             default:

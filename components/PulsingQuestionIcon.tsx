@@ -1,7 +1,6 @@
-
 import React from 'react';
-import { useApp } from '../contexts/AppContext';
-import { Page } from '../types';
+import { useApp } from '@/contexts/AppContext';
+import { Page } from '@/types';
 
 const PulsingQuestionIcon: React.FC = () => {
     const { setCurrentPage } = useApp();

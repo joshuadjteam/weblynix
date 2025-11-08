@@ -3,7 +3,7 @@ export enum Page {
     LOCAL_MAIL = 'LocalMail',
     CHAT = 'Chat',
     NOTEPAD = 'Notepad',
-    CONTACT = 'Contact',
+    CONTACTS = 'Contacts',
     CALCULATOR = 'Calculator',
     AI = 'AI',
     DIALER = 'Dialer',
@@ -72,4 +72,12 @@ export interface ChatMessage {
 export interface Conversation {
   contactId: number;
   messages: ChatMessage[];
+}
+
+export interface Contact {
+  id: number;
+  userId: number;
+  name: string;
+  email: string | null;
+  phone: string | null;
 }

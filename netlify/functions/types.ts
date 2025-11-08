@@ -62,3 +62,11 @@ export interface Conversation {
   contactId: number;
   messages: ChatMessage[];
 }
+
+export interface Contact {
+  id: number;
+  userId: number;
+  name: string;
+  email: string | null;
+  phone: string | null;
+}

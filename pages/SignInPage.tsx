@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useApp } from '../contexts/AppContext';
-import { LogoIcon } from '../components/icons/Icons';
+import { useApp } from '@/contexts/AppContext';
+import { LogoIcon } from '@/components/icons/Icons';
 
 const SignInPage: React.FC = () => {
     const { signIn, signInAsGuest } = useApp();
