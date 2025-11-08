@@ -58,8 +58,13 @@ const NotepadPage: React.FC = () => {
         if (response.ok) {
             const newNotes = notes.filter(note => note.id !== noteId);
             setNotes(newNotes);
-            if(activeNoteId === noteId) {
-                setActiveNoteId(newNotes.length > 0 ? sortedNotes[0].id : null);
+            if (activeNoteId === noteId) {
+                if (newNotes.length > 0) {
+                    const newSortedNotes = [...newNotes].sort((a, b) => b.lastModified - a.lastModified);
+                    setActiveNoteId(newSortedNotes[0].id);
+                } else {
+                    setActiveNoteId(null);
+                }
             }
         }
     };
