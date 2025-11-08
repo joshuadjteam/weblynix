@@ -1,0 +1,5 @@
+{
+  "name": "Lynix",
+  "description": "Lynix is a multi-functional web application featuring AI chat, productivity tools like Notepad and Calculator, and communication services including LocalMail, Chat, and a Dialer. It offers a seamless experience with user management and light/dark modes.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,75 @@
+export enum Page {
+    HOME = 'Home',
+    LOCAL_MAIL = 'LocalMail',
+    CHAT = 'Chat',
+    NOTEPAD = 'Notepad',
+    CONTACT = 'Contact',
+    CALCULATOR = 'Calculator',
+    AI = 'AI',
+    DIALER = 'Dialer',
+    PROFILE = 'Profile',
+    ADMIN_PORTAL = 'Admin Portal',
+    SIGN_IN = 'Sign In',
+}
+
+export enum UserRole {
+  ADMIN = 'Admin',
+  STANDARD = 'Standard',
+  TRIAL = 'Trial',
+  GUEST = 'Guest',
+  CUSTOM = 'Custom',
+}
+
+export enum BillingStatus {
+  ON_TIME = 'On Time',
+  OVERDUE = 'Overdue',
+  SUSPENDED = 'Suspended',
+}
+
+export interface UserFeatures {
+  dialer: boolean;
+  ai: boolean;
+  mail: boolean;
+  chat: boolean;
+}
+
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  sipTalkId: string;
+  password?: string;
+  role: UserRole;
+  billingStatus: BillingStatus;
+  features: UserFeatures;
+}
+
+export interface Note {
+  id: number;
+  userId: number;
+  title: string;
+  content: string;
+  lastModified: number;
+}
+
+export interface Mail {
+  id: number;
+  from: { name: string; email: string };
+  to: string;
+  subject: string;
+  body: string;
+  timestamp: number;
+  read: boolean;
+}
+
+export interface ChatMessage {
+  id: number;
+  senderId: number; // 0 for current user, otherwise other user's id
+  text: string;
+  timestamp: number;
+}
+
+export interface Conversation {
+  contactId: number;
+  messages: ChatMessage[];
+}
