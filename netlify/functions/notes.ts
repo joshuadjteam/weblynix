@@ -29,7 +29,8 @@ const handler: Handler = async (event) => {
                 notes.push(newNote);
                 return { statusCode: 201, body: JSON.stringify(newNote) };
 
-            case 'PUT':
+            // Fix: Added a block to scope `noteIndex` and prevent a redeclaration error.
+            case 'PUT': {
                 const updatedNote: Note = JSON.parse(body || '{}');
                 const noteIndex = notes.findIndex(n => n.id === updatedNote.id && n.userId === userId);
                 if (noteIndex !== -1) {
@@ -37,9 +38,11 @@ const handler: Handler = async (event) => {
                     return { statusCode: 200, body: JSON.stringify(notes[noteIndex]) };
                 }
                 return { statusCode: 404, body: JSON.stringify({ message: 'Note not found or access denied' }) };
+            }
             
             // Fix: Cannot reassign an imported variable. Mutate the array in-place instead.
-            case 'DELETE':
+            // Fix: Added a block to scope `noteIndex` and prevent a redeclaration error.
+            case 'DELETE': {
                 const { id } = JSON.parse(body || '{}');
                 const noteIndex = notes.findIndex(n => n.id === id && n.userId === userId);
                 if (noteIndex !== -1) {
@@ -47,6 +50,7 @@ const handler: Handler = async (event) => {
                     return { statusCode: 204, body: '' };
                 }
                 return { statusCode: 404, body: JSON.stringify({ message: 'Note not found or access denied' }) };
+            }
 
             default:
                 return { statusCode: 405, body: 'Method Not Allowed' };

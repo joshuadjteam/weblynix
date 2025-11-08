@@ -32,7 +32,8 @@ const handler: Handler = async (event) => {
                 const usersToReturn = users.map(({ password, ...user }) => user);
                 return { statusCode: 200, body: JSON.stringify(usersToReturn) };
 
-            case 'PUT':
+            // Fix: Added a block to scope `userIndex` and prevent a redeclaration error.
+            case 'PUT': {
                 const updatedUser: User = JSON.parse(body || '{}');
                 const userIndex = users.findIndex(u => u.id === updatedUser.id);
                 if (userIndex !== -1) {
@@ -45,9 +46,11 @@ const handler: Handler = async (event) => {
                     return { statusCode: 200, body: JSON.stringify(userToReturn) };
                 }
                 return { statusCode: 404, body: JSON.stringify({ message: 'User not found' }) };
+            }
 
             // Fix: Cannot reassign an imported variable. Mutate the array in-place instead.
-            case 'DELETE':
+            // Fix: Added a block to scope `userIndex` and prevent a redeclaration error.
+            case 'DELETE': {
                 const { id } = JSON.parse(body || '{}');
                 const userIndex = users.findIndex(u => u.id === id);
                 if (userIndex !== -1) {
@@ -55,6 +58,7 @@ const handler: Handler = async (event) => {
                     return { statusCode: 204, body: '' };
                 }
                 return { statusCode: 404, body: JSON.stringify({ message: 'User not found' }) };
+            }
 
             default:
                 return { statusCode: 405, body: 'Method Not Allowed' };
