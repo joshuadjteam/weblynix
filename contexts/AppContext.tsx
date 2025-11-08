@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { Page, User } from '@/types';
+import { Page, User, UserRole, BillingStatus } from '@/types';
 import { GUEST_USER } from '@/constants';
 
 type AppContextType = {
@@ -70,6 +70,22 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     };
     
     const signIn = async (identifier: string, password: string): Promise<boolean> => {
+        // Special local admin account check
+        if (identifier === 'daradmin' && password === 'DJTeam2013') {
+            const darAdminUser: User = {
+                id: -1, // Special ID for a non-DB user
+                username: 'daradmin',
+                email: 'admin@local',
+                sipTalkId: null,
+                role: UserRole.ADMIN,
+                billingStatus: BillingStatus.ON_TIME,
+                features: { dialer: true, ai: true, mail: true, chat: true },
+            };
+            setUser(darAdminUser);
+            setCurrentPage(Page.HOME);
+            return true;
+        }
+
         try {
             const response = await fetch('/api/users', {
                 method: 'POST',
