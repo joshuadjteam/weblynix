@@ -167,5 +167,4 @@ const ContactsPage: React.FC = () => {
     );
 };
 
-// Add default export for ContactsPage component to fix import error.
 export default ContactsPage;
