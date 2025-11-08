@@ -6,7 +6,7 @@ import HomePage from '@/pages/HomePage';
 import LocalMailPage from '@/pages/LocalMailPage';
 import ChatPage from '@/pages/ChatPage';
 import NotepadPage from '@/pages/NotepadPage';
-import ContactsPage from '@/pages/ContactPage';
+import ContactsPage from '@/pages/ContactsPage';
 import CalculatorPage from '@/pages/CalculatorPage';
 import LynxAiPage from '@/pages/LynxAiPage';
 import DialerPage from '@/pages/DialerPage';
