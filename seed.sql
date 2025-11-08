@@ -40,7 +40,7 @@ CREATE TABLE "notes" (
 
 -- Create the "chat_messages" table
 CREATE TABLE "chat_messages" (
-    "id" SERIAL PRIMARY KEY,
+    "id"SERIAL PRIMARY KEY,
     "senderId" INTEGER NOT NULL REFERENCES "users"("id") ON DELETE CASCADE,
     "receiverId" INTEGER NOT NULL REFERENCES "users"("id") ON DELETE CASCADE,
     "text" TEXT NOT NULL,
@@ -59,10 +59,34 @@ CREATE TABLE "mails" (
 );
 
 
--- Initial Data Seeding for an admin user
+-- ========== INITIAL DATA SEEDING ==========
+
+-- Seed an admin user (ID will be 1)
 -- Login with username 'admin' and password 'password'
 INSERT INTO "users" ("username", "email", "sipTalkId", "password", "role", "billingStatus", "features") VALUES
 ('admin', 'admin@lynixity.x10.bz', '0470000001', 'password', 'Admin', 'On Time', '{"dialer": true, "ai": true, "mail": true, "chat": true}');
+
+-- Seed a standard user for testing chat (ID will be 2)
+-- Login with username 'demo' and password 'password'
+INSERT INTO "users" ("username", "email", "sipTalkId", "password", "role", "billingStatus", "features") VALUES
+('demo', 'demo@lynixity.x10.bz', '0470000002', 'password', 'Standard', 'On Time', '{"dialer": false, "ai": true, "mail": true, "chat": true}');
+
+-- Seed a demo contact for the admin user
+INSERT INTO "contacts" ("userId", "name", "email", "phone") VALUES
+(1, 'Demo User', 'demo@lynixity.x10.bz', '555-1234');
+
+-- Seed a demo note for the admin user
+INSERT INTO "notes" ("userId", "title", "content", "lastModified") VALUES
+(1, 'Welcome to Notepad!', 'This is your first note. You can edit or delete this and create new ones.', EXTRACT(EPOCH FROM NOW()) * 1000);
+
+-- Seed demo mail for the admin user
+INSERT INTO "mails" ("from", "to", "subject", "body", "timestamp", "read") VALUES
+('{"name": "Lynix Support", "email": "support@lynixity.x10.bz"}', 'admin@lynixity.x10.bz', 'Welcome to LocalMail!', 'Hello and welcome to the new LocalMail feature!\n\nThis is a demonstration of the mail client interface. You can browse, read, and compose messages.\n\nEnjoy exploring!\n\nThe Lynix Team', (EXTRACT(EPOCH FROM NOW()) * 1000)::bigint - 300000, false),
+('{"name": "Project Updates", "email": "updates@lynix.dev"}', 'admin@lynixity.x10.bz', 'Q3 Project Roadmap', 'Hi team,\n\nPlease find the attached roadmap for our projects in the third quarter. We have some exciting updates coming up for the Notepad and Dialer apps.\n\nBest,\nManagement', (EXTRACT(EPOCH FROM NOW()) * 1000)::bigint - 7200000, true);
+
+-- Seed a demo chat between admin (ID 1) and demo user (ID 2)
+INSERT INTO "chat_messages" ("senderId", "receiverId", "text", "timestamp") VALUES
+(2, 1, 'Hey Admin, just testing out the new chat feature!', (EXTRACT(EPOCH FROM NOW()) * 1000)::bigint - 60000);
 
 -- Seeding demo mail for the admin user
 INSERT INTO "mails" ("from", "to", "subject", "body", "timestamp", "read") VALUES
