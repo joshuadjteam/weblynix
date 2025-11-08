@@ -81,3 +81,16 @@ export interface Contact {
   email: string | null;
   phone: string | null;
 }
+
+export enum CallStatus {
+  CONNECTED = 'Connected',
+  FAILED = 'Failed',
+}
+
+export interface CallRecord {
+  id: number;
+  number: string;
+  status: CallStatus;
+  timestamp: number;
+  duration: number; // in seconds
+}
